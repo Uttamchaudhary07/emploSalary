@@ -5,6 +5,7 @@ __pycache__/
 .venv/
 venv/
 *.log
+.pytest_cache/
 
 # Node
 node_modules/
@@ -25,10 +26,12 @@ dist-ssr/
 .claude/
 
 # Large / generated ML artifacts (regenerate via scripts/train_model.py)
-models/
-catboost_info/
-artifacts/*.pkl
-Employee_Salary_Estimator_Dataset_100000 copy.xlsx
+# Anchored to repo root (leading /) so these don't accidentally shadow
+# same-named directories elsewhere, e.g. backend/app/models/.
+/models/
+/catboost_info/
+/artifacts/*.pkl
+/Employee_Salary_Estimator_Dataset_100000 copy.xlsx
 
 # Jupyter
 .ipynb_checkpoints/

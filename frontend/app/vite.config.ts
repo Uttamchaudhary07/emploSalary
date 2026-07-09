@@ -6,6 +6,9 @@ import { inspectAttr } from 'kimi-plugin-inspect-react'
 // https://vite.dev/config/
 export default defineConfig({
   base: '/',
+  // Read env files (.env, .env.local, ...) from the repo root instead of
+  // this package's directory, so frontend and backend share one .env.
+  envDir: path.resolve(__dirname, "../.."),
   plugins: [inspectAttr(), react()],
   server: {
     port: 3000,

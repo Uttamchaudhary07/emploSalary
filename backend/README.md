@@ -59,7 +59,7 @@ Neon in production and SQLite in tests.
 cd backend
 python3.12 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env   # fill in DATABASE_URL (Neon), JWT_SECRET_KEY, etc.
+cp ../.env.example ../.env   # root-level, shared with frontend; fill in DATABASE_URL (Neon), JWT_SECRET_KEY, etc.
 ```
 
 Run migrations (creates schema + seeds ~20 job roles, ~17 locations, ~22 skills):
@@ -78,8 +78,9 @@ Interactive docs at `http://localhost:8000/docs`.
 
 ## Configuration
 
-All configuration is environment-driven (see `.env.example` /
-`app/core/config.py`). Notable groups:
+All configuration is environment-driven (see root `.env.example` /
+`app/core/config.py`). The backend reads `.env` from the repo root, shared
+with the frontend. Notable groups:
 
 - **Database**: `DATABASE_URL` — Neon connection string using the `psycopg`
   (v3) driver, e.g. `postgresql+psycopg://user:pass@host/db?sslmode=require`.

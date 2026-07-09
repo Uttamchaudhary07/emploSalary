@@ -1,0 +1,1 @@
+"""Employee salary ML package."""

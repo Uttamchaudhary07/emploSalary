@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+*.log
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Env files (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# Editors / OS / local tooling
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+.claude/
+
+# Large / generated ML artifacts (regenerate via scripts/train_model.py)
+models/
+catboost_info/
+artifacts/*.pkl
+Employee_Salary_Estimator_Dataset_100000 copy.xlsx
+
+# Jupyter
+.ipynb_checkpoints/

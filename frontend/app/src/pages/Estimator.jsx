@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Calculator, ArrowRight, Info } from "lucide-react";
 import PredictionForm from "@/components/PredictionForm";
 import LoadingAnimation from "@/components/LoadingAnimation";
-import { mockApi, salaryApi } from "@/services/api";
+import { salaryApi } from "@/services/api";
 import { useToast } from "@/hooks/useToast";
 import Toast from "@/components/Toast";
 
@@ -20,13 +20,7 @@ export default function Estimator() {
   const handleSubmit = async (formData) => {
     setIsLoading(true);
     try {
-      // Try real API first, fall back to mock
-      let result;
-      try {
-        result = await salaryApi.predict(formData);
-      } catch {
-        result = await mockApi.predict(formData);
-      }
+      const result = await salaryApi.predict(formData);
 
       addToast({
         type: "success",
@@ -107,7 +101,7 @@ export default function Estimator() {
                       How to get the best results
                     </p>
                     <p className="text-sm text-blue-600 dark:text-blue-300 mt-1">
-                      Provide as much detail as possible. The more information you share, the more accurate your estimate will be.
+                      The survey estimate uses your role, years of experience, and country. Skills and education are recorded in the form only.
                     </p>
                   </div>
                 </div>

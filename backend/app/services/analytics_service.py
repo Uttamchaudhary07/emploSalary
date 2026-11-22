@@ -18,10 +18,12 @@ class AnalyticsService:
                 created_at=row.created_at,
                 predicted_salary=float(row.predicted_salary),
                 job_title=row.job_title,
+                currency=row.currency,
             )
             for row in trend_rows
         ]
-        salaries = [point.predicted_salary for point in trend]
+        currencies = {point.currency for point in trend}
+        salaries = [point.predicted_salary for point in trend] if len(currencies) == 1 else []
         return UserAnalytics(
             trend=trend,
             min_salary=min(salaries) if salaries else None,

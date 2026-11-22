@@ -1,9 +1,8 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Download, Share2, TrendingUp } from "lucide-react";
+import { ArrowLeft, Download, Share2 } from "lucide-react";
 import SalaryResultCard from "@/components/SalaryResultCard";
-import TakeHomeCalculator from "@/components/TakeHomeCalculator";
 import { formatCurrency } from "@/lib/utils";
 
 export default function Result() {
@@ -15,12 +14,12 @@ export default function Result() {
     window.scrollTo(0, 0);
 
     // Redirect if no result data
-    if (!result) {
+    if (!result?.model_version?.startsWith("survey-")) {
       navigate("/estimator");
     }
   }, [result, navigate]);
 
-  if (!result) return null;
+  if (!result?.model_version?.startsWith("survey-")) return null;
 
   return (
     <main className="pt-16 min-h-screen">
@@ -70,7 +69,7 @@ export default function Result() {
                       if (navigator.share) {
                         navigator.share({
                           title: "My Salary Estimate",
-                          text: `My estimated salary is ${formatCurrency(result.predicted_salary)}`,
+                          text: `My estimated salary is ${formatCurrency(result.predicted_salary, result.currency)}`,
                         });
                       }
                     }}
@@ -91,13 +90,11 @@ export default function Result() {
         <div className="section-container">
           <div className="section-inner max-w-4xl mx-auto">
             <SalaryResultCard
+              key={location.key}
               result={result}
               onNewEstimate={() => navigate("/estimator")}
             />
 
-            <div className="mt-6">
-              <TakeHomeCalculator defaultCTC={result.predicted_salary} />
-            </div>
           </div>
         </div>
       </section>

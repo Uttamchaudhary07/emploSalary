@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
-  JOB_TITLES,
+  SURVEY_JOB_TITLES,
   EDUCATION_LEVELS,
   LOCATIONS,
   SKILLS,
@@ -118,7 +118,7 @@ export default function PredictionForm({ onSubmit, isLoading }) {
     if (value.trim()) {
       const filtered = SKILLS.filter(
         (s) =>
-          s.toLowerCase().includes(value.toLowerCase()) &&
+          s.toLowerCase().includes(value.trim().toLowerCase()) &&
           !selectedSkills.includes(s)
       ).slice(0, 5);
       setFilteredSkills(filtered);
@@ -170,7 +170,7 @@ export default function PredictionForm({ onSubmit, isLoading }) {
                 )}
               >
                 <option value="">Select job title</option>
-                {JOB_TITLES.map((title) => (
+                {SURVEY_JOB_TITLES.map((title) => (
                   <option key={title} value={title}>
                     {title}
                   </option>
@@ -245,7 +245,7 @@ export default function PredictionForm({ onSubmit, isLoading }) {
                 )}
               >
                 <option value="">Select location</option>
-                {LOCATIONS.map((loc) => (
+                {LOCATIONS.filter((location) => location !== "Remote").map((loc) => (
                   <option key={loc} value={loc}>
                     {loc}
                   </option>
@@ -343,9 +343,9 @@ export default function PredictionForm({ onSubmit, isLoading }) {
                   if (e.key === "Enter" && skillInput.trim()) {
                     e.preventDefault();
                     const exact = SKILLS.find(
-                      (s) => s.toLowerCase() === skillInput.toLowerCase()
+                      (s) => s.toLowerCase() === skillInput.trim().toLowerCase()
                     );
-                    addSkill(exact || skillInput.trim());
+                    addSkill(exact || filteredSkills[0] || skillInput.trim());
                   }
                 }}
                 placeholder="Type a skill and press Enter (max 10)"

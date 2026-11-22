@@ -7,7 +7,12 @@ from typing import Any
 import httpx
 
 from app.core.config import get_settings
-from app.core.exceptions import MLServiceError, MLServiceTimeoutError, MLServiceUnavailableError
+from app.core.exceptions import (
+    MLServiceError,
+    MLServiceTimeoutError,
+    MLServiceUnavailableError,
+    ValidationAppError,
+)
 from app.core.logging import get_logger
 
 logger = get_logger(component="ml_service_client")
@@ -26,6 +31,7 @@ class MLPredictionRequest:
         country: str,
         state: str | None,
         skills: list[str],
+        include_comparisons: bool = False,
     ) -> None:
         self.request_id = str(uuid.uuid4())
         self.job_title = job_title
@@ -35,6 +41,7 @@ class MLPredictionRequest:
         self.country = country
         self.state = state
         self.skills = skills
+        self.include_comparisons = include_comparisons
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -44,6 +51,7 @@ class MLPredictionRequest:
             "education_level": self.education_level,
             "location": {"city": self.city, "country": self.country, "state": self.state},
             "skills": self.skills,
+            **({"include_comparisons": True} if self.include_comparisons else {}),
         }
 
 
@@ -103,6 +111,13 @@ class MLServiceClient:
 
             if response.status_code == 200:
                 return response.json()
+
+            if response.status_code == 422:
+                try:
+                    detail = response.json().get("detail")
+                except (ValueError, AttributeError):
+                    detail = None
+                raise ValidationAppError(detail if isinstance(detail, str) else None)
 
             if response.status_code >= 500:
                 last_exc = MLServiceError(

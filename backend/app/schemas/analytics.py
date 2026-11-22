@@ -8,6 +8,7 @@ from pydantic import BaseModel
 class SalaryTrendPoint(BaseModel):
     created_at: datetime
     predicted_salary: float
+    currency: str
     job_title: str
 
 

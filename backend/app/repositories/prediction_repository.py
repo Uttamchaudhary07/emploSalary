@@ -84,9 +84,12 @@ class PredictionRepository:
         return (await self._session.execute(stmt)).scalar_one()
 
     async def average_salary_for_user(self, user_id: uuid.UUID) -> float | None:
-        stmt = select(func.avg(Prediction.predicted_salary)).where(Prediction.user_id == user_id)
-        result = (await self._session.execute(stmt)).scalar_one()
-        return float(result) if result is not None else None
+        stmt = select(
+            func.avg(Prediction.predicted_salary),
+            func.count(func.distinct(Prediction.currency)),
+        ).where(Prediction.user_id == user_id)
+        average, currency_count = (await self._session.execute(stmt)).one()
+        return float(average) if currency_count == 1 else None
 
     async def latest_for_user(self, user_id: uuid.UUID) -> Prediction | None:
         stmt = (
@@ -112,12 +115,16 @@ class PredictionRepository:
 
     async def platform_overview_stats(self) -> dict:
         total_predictions = (await self._session.execute(select(func.count(Prediction.id)))).scalar_one()
-        avg_salary = (await self._session.execute(select(func.avg(Prediction.predicted_salary)))).scalar_one()
+        avg_salary, currency_count = (
+            await self._session.execute(select(
+                func.avg(Prediction.predicted_salary), func.count(func.distinct(Prediction.currency))
+            ))
+        ).one()
         distinct_users = (
             await self._session.execute(select(func.count(func.distinct(Prediction.user_id))))
         ).scalar_one()
         return {
             "total_predictions": total_predictions,
-            "average_predicted_salary": float(avg_salary) if avg_salary is not None else None,
+            "average_predicted_salary": float(avg_salary) if currency_count == 1 else None,
             "distinct_users": distinct_users,
         }

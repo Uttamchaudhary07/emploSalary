@@ -13,4 +13,4 @@ package-dir = {"" = "."}
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["ml*"]
+include = ["ml*", "scripts*", "utils*", "training*", "evaluation*"]

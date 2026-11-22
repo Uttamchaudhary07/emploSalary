@@ -40,8 +40,10 @@ alembic/          migrations (schema + reference-data seed)
 `JobRole` / `Location` / `Skill` rows → call the ML service via `MLServiceClient`
 → persist the `Prediction` + a `PredictionHistory("created")` audit event →
 return the formatted result. If the ML service is down, times out, or errors,
-the request fails with a structured `503`/`504`/`502` — this backend never
-falls back to computing a prediction itself.
+the request fails with a structured `503`/`504`/`502`. Unsupported roles or
+markets return `422`. Predictions retain their model currency. Dashboards and
+analytics omit a single salary aggregate when the underlying results mix
+currencies.
 
 ## Database
 
@@ -67,6 +69,10 @@ Run migrations (creates schema + seeds ~20 job roles, ~17 locations, ~22 skills)
 ```bash
 alembic upgrade head
 ```
+
+Start the [survey inference service](../README.md#run-the-survey-inference-service)
+on port 8001, then run the API. Match the inference process's
+`ML_SERVICE_API_KEY` to the backend setting if configured.
 
 Run the API:
 
@@ -112,6 +118,7 @@ All routes are mounted under `API_PREFIX` (default `/api/v1`).
 |---|---|
 | Auth | `POST /auth/register`, `/login`, `/refresh`, `/logout`, `/forgot-password`, `/reset-password`, `/email-verification/request`, `/email-verification/confirm` |
 | User profile | `GET/PATCH /users/me`, `POST /users/me/change-password` |
+| Public estimate | `POST /salary/predict` (survey estimate without prediction history) |
 | Prediction | `POST /predictions/predict`, `GET /predictions/{id}` |
 | Prediction history | `GET /predictions/history` (paginated, filterable by job role/location/search/date range), `GET /predictions/{id}/history` (audit trail) |
 | Saved reports | `POST/GET /reports`, `GET/DELETE /reports/{id}` |

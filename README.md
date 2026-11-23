@@ -139,3 +139,22 @@ matched cohort. If a role-and-experience group is too small, the results show
 the same role across experience levels or the broader market. For INR results,
 the take-home calculator shares the offer amount and accepts optional annual pay
 outside regular salary and monthly deductions.
+
+## Vercel deployment
+
+The Vercel project builds `frontend/app` from GitHub. The estimator calls the
+same-origin `/api/v1/salary/predict` function on hosted pages. Local development
+continues to use `VITE_API_BASE_URL`.
+
+The hosted function uses a checked-in summary of model estimates at whole years
+of experience and aggregate survey percentiles. After retraining the models,
+regenerate the summary before pushing the next deployment.
+
+```sh
+python -m scripts.export_hosted_survey \
+  --artifact-dir /path/to/survey-benchmark \
+  --output frontend/app/data/hosted-survey.json
+```
+
+The hosted route serves public estimates. The authenticated API for saved
+predictions still runs as a separate backend.

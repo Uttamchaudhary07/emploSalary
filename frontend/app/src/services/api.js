@@ -112,6 +112,8 @@ export const salaryApi = {
       job_title: data.job_title,
       years_experience: data.years_experience,
       country,
+    }, {
+      baseURL: ["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname) ? API_BASE_URL : "",
     });
     return response.data;
   },
